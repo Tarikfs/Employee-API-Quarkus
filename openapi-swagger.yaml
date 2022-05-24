@@ -1,0 +1,223 @@
+openapi: 3.0.1
+info:
+  title: API for Employee
+  description: API for Employee administratiom
+  version: 0.0.1
+servers:
+  - url: https://623ba8822e056d1037f5426a.mockapi.io/
+    description: API de employee test
+tags:
+  - name: Employees
+    description: "Data about employees"
+paths:
+  /employee:
+    get:
+      tags:
+        - "Employee"
+      summary: Recovers all Employee's
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Employees"
+        "500":
+          description: "Server error"
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/errorModel"
+              example:
+                error: "Error de Servidor"
+                from: "Server"
+    post:
+      tags:
+        - "Employee"
+      summary: Creates new Employee registration
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EmployeeRegistration"
+      responses:
+        "201":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Employee"
+        "400":
+          description: "Field validation Error"
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/errorModel"
+  /employee/{id}:
+    parameters:
+      - name: id
+        in: path
+        schema:
+          type: integer
+        required: true
+    get:
+      tags:
+        - "Employee"
+      summary: "recovers employee by ID"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Employee"
+        "400":
+          description: "Field validation Error"
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/errorModel"
+
+        "404":
+          description: "Employee ID not found"
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/NotFoundModel"
+    put:
+      tags:
+        - "Employee"
+      summary: Edits all fields in Employee registration
+      requestBody:
+        description: "alters all fields and any uninformed feilds becomes null"
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EmployeeRegistration"
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Employee"
+        "400":
+          description: "Field validation Error"
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/errorModel"
+        "404":
+          description: "Employee not found"
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/NotFoundModel"
+    delete:
+      tags:
+        - "Employee"
+      summary: Deletes Employee
+      responses:
+        "204":
+          description: Success
+        "400":
+          description: "Invalid ID Error"
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/errorModel"
+        "404":
+          description: "Employee ID not found"
+          content:
+            aplication/json:
+              schema:
+                $ref: "#/components/schemas/NotFoundModel"
+components:
+  schemas:
+    EmployeeRegistration:
+      type: object
+      required:
+        - first_name
+        - last_name
+        - department
+        - job_title
+        - employee_type
+        - status
+        - start_date
+        - email
+      properties:
+        first_name:
+          type: string
+          minLength: 1
+          maxLength: 45
+          example: "joão"
+        last_name:
+          type: string
+          minLength: 1
+          maxLength: 45
+          example: "joãozinho"
+        department:
+          type: string
+          minLength: 1
+          maxLength: 45
+          example: "tec"
+        job_title:
+          type: string
+          minLength: 1
+          maxLength: 45
+          example: "dev"
+        employee_type:
+          type: string
+          minLength: 1
+          maxLength: 45
+          example: "intern"
+        status:
+          type: string
+          minLength: 1
+          maxLength: 45
+          example: "active"
+        start_date:
+          type: string
+          format: date
+          example: "2022-10-15"
+        email:
+          type: string
+          minLength: 1
+          maxLength: 45
+          example: "joao@joaozinho"
+    Employee:
+      allOf:
+        - $ref: "#/components/schemas/EmployeeRegistration"
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: integer
+          minimum: 11
+          maximum: 14
+    Employees:
+      type: array
+      items:
+        $ref: "#/components/schemas/Employee"
+    errorModel:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Internal server Error"
+        from:
+          type: string
+          example: "employee-api-app"
+    NotFoundModel:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "url not found"
+        from:
+          type: string
+          example: "employee-api-app"
+
